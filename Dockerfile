@@ -16,7 +16,7 @@ RUN ./gradlew dependencies --no-daemon
 COPY src/ src/
 
 # Copy the credentials file (Ensure it is in the project root)
-COPY config/ /opt/app/config/
+#COPY config/ /opt/app/config/
 
 # Build the application
 RUN ./gradlew clean build --no-daemon
@@ -35,7 +35,7 @@ RUN mkdir -p /opt/app/config
 COPY --from=builder /opt/app/build/libs/*.jar /opt/app/
 
 # ✅ Copy the credentials file from builder stage
-COPY --from=builder /opt/app/config /opt/app/config
+#COPY --from=builder /opt/app/config /opt/app/config
 
 # Debug: List config files
 RUN ls -lh /opt/app/config/
