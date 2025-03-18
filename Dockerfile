@@ -25,8 +25,11 @@ WORKDIR /opt/app
 # Expose the application port
 EXPOSE 8080
 
-# Copy the built JAR file from the builder stage
-COPY --from=builder /opt/app/build/libs/*.jar /opt/app/app.jar
+# Copy the built JAR files from the builder stage
+COPY --from=builder /opt/app/build/libs/*.jar /opt/app/
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "/opt/app/app.jar"]
+# 🔹 Print the list of JAR files in /opt/app
+RUN ls -lh /opt/app/
+
+# Dynamically find and run the JAR file
+CMD ["sh", "-c", "java -jar /opt/app/$(ls /opt/app | grep '.jar' | head -n 1)"]
