@@ -9,39 +9,25 @@ COPY gradle/ gradle/
 # Fix permission issue for Gradle Wrapper
 RUN chmod +x gradlew
 
-# Download dependencies for offline use
-RUN ./gradlew dependencies --no-daemon
-
 # Copy the application source code
 COPY src/ src/
 
-# Copy the credentials file (Ensure it is in the project root)
-#COPY config/ /opt/app/config/
-
 # Build the application
-RUN ./gradlew clean build --no-daemon
+RUN ./gradlew clean build --no-daemon --stacktrace
 
 # 🌟 Stage 2: Create the runtime image
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /opt/app
 
 # Expose the application port
+ENV PORT 8080
 EXPOSE 8080
 
-# ✅ Ensure config directory exists before copying
-RUN mkdir -p /opt/app/config
-
 # Copy built JAR files
-COPY --from=builder /opt/app/build/libs/*.jar /opt/app/
+COPY --from=builder /opt/app/build/libs/*.jar /opt/app/app.jar
 
-# ✅ Copy the credentials file from builder stage
-#COPY --from=builder /opt/app/config /opt/app/config
+# Ensure JAR has execution permissions
+RUN chmod +x /opt/app/app.jar
 
-# Debug: List config files
-RUN ls -lh /opt/app/config/
-
-# Set environment variable for credentials
-
-
-# Dynamically find and run the JAR file
-CMD ["sh", "-c", "java -jar /opt/app/$(ls /opt/app | grep '.jar' | head -n 1)"]
+# Run the application
+CMD ["java", "-jar", "/opt/app/app.jar"]
