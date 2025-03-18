@@ -15,6 +15,9 @@ RUN ./gradlew dependencies --no-daemon
 # Copy the application source code
 COPY src/ src/
 
+# Copy the credentials file (Ensure it is in the project root)
+COPY config/ /opt/app/config/
+
 # Build the application
 RUN ./gradlew clean build --no-daemon
 
@@ -25,11 +28,20 @@ WORKDIR /opt/app
 # Expose the application port
 EXPOSE 8080
 
-# Copy the built JAR files from the builder stage
+# ✅ Ensure config directory exists before copying
+RUN mkdir -p /opt/app/config
+
+# Copy built JAR files
 COPY --from=builder /opt/app/build/libs/*.jar /opt/app/
 
-# 🔹 Print the list of JAR files in /opt/app
-RUN ls -lh /opt/app/
+# ✅ Copy the credentials file from builder stage
+COPY --from=builder /opt/app/config /opt/app/config
+
+# Debug: List config files
+RUN ls -lh /opt/app/config/
+
+# Set environment variable for credentials
+ENV GOOGLE_APPLICATION_CREDENTIALS="/opt/app/config/acn-lta-planet-demo-f858693ad38d.json"
 
 # Dynamically find and run the JAR file
 CMD ["sh", "-c", "java -jar /opt/app/$(ls /opt/app | grep '.jar' | head -n 1)"]
