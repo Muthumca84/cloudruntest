@@ -41,7 +41,7 @@ COPY --from=builder /opt/app/config /opt/app/config
 RUN ls -lh /opt/app/config/
 
 # Set environment variable for credentials
-ENV GOOGLE_APPLICATION_CREDENTIALS="/opt/app/config/acn-lta-planet-demo-f858693ad38d.json"
+
 
 # Dynamically find and run the JAR file
 CMD ["sh", "-c", "java -jar /opt/app/$(ls /opt/app | grep '.jar' | head -n 1)"]
