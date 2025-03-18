@@ -1,0 +1,52 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.3'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'org.test.muthu'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+	mavenCentral()  // Ensure dependencies are fetched correctly
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1"  // Use a specific version
+	}
+}
+dependencies {
+	// Spring Boot Starter Web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Spring Boot Starter
+	implementation 'org.springframework.boot:spring-boot-starter'
+
+	// PostgreSQL Driver
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// Google Cloud SQL Connector
+	implementation 'com.google.cloud.sql:postgres-socket-factory:1.13.0'
+
+	// Google Cloud Spring Boot Starter
+	implementation 'com.google.cloud:spring-cloud-gcp-starter-sql-postgresql:4.7.2'
+
+	// Lombok (Annotation processor)
+	compileOnly 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+
+	testImplementation 'junit:junit:4.13.2'
+
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
