@@ -6,6 +6,9 @@ WORKDIR /opt/app
 COPY gradlew build.gradle settings.gradle ./
 COPY gradle/ gradle/
 
+# Fix permission issue for Gradle Wrapper
+RUN chmod +x gradlew
+
 # Download dependencies for offline use
 RUN ./gradlew dependencies --no-daemon
 
